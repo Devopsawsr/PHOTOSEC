@@ -28,7 +28,7 @@ jobs:
       - name: Create Glue job
         run: |
           aws glue create-job \
-            --name "Data_ETL_job" \
+            --name "Data_ETL_Gluejob" \
             --role "AWS-Glue" \
             --command '{"Name":"glueetl","ScriptLocation":"file://trigger_glue_job.py"}' \
             --default-arguments '{"--job-language":"python"}'
