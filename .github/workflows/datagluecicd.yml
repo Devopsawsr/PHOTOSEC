@@ -23,6 +23,7 @@ jobs:
 
      
       - name: Create Glue Job
+        id: create-glue-job
         run: |
           # Get the ARN of the IAM role
           ROLE_ARN=$(aws iam get-role --role-name AWS-Glue --query 'Role.Arn' --output text)
@@ -38,12 +39,10 @@ jobs:
                         --role "$ROLE_ARN" \
                         --command 'Name=glueetl,ScriptLocation=https://raw.githubusercontent.com/Devopsawsr/PHOTOSEC/glue/.github/scripts/trigger_glue_job.py' \
                         --default-arguments '{"--job-language": "python"}'
-
+          echo "::set-output name=job-name::${JOB_NAME}"
 
       - name: Install dependencies
         run: pip install boto3
       
       - name: Run Python script
-        run: python trigger_glue_job.py $GITHUB_JOB_NAME
-        env:
-          GITHUB_JOB_NAME: ${{ steps.create-glue-job.outputs.job-name }}
+        run: python .github/scripts/trigger_glue_job.py "${{ steps.create-glue-job.outputs.job-name }}"
