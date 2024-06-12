@@ -34,7 +34,9 @@ jobs:
                         --default-arguments '{"--job-language": "python"}'
 
 
-
+      - name: Install dependencies
+        run: pip install boto3
+      
       - name: Run Python script
         run: python trigger_glue_job.py $GITHUB_JOB_NAME
         env:
