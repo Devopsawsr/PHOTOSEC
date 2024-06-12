@@ -1,5 +1,4 @@
 import os
-import sys
 import boto3
  
 def trigger_glue_job(glue_job_name):
@@ -29,7 +28,7 @@ if __name__ == "__main__":
 
     if not job_name:
         print("Error: Environment variable GITHUB_JOB_NAME is not set.")
-        sys.exit(1)
+        exit(1)
 
     # Trigger the Glue job
     run_id = trigger_glue_job(job_name)
