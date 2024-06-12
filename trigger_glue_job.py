@@ -1,3 +1,4 @@
+import sys
 import boto3
  
 def trigger_glue_job(glue_job_name):
@@ -22,7 +23,10 @@ def trigger_glue_job(glue_job_name):
     return run_id
  
 if __name__ == "__main__":
-    # Replace 'your_glue_job_name' with the actual name of your Glue job
-    job_name = 'your_glue_job_name'
+    if len(sys.argv) < 2:
+        print("Usage: python trigger_glue_job.py <glue_job_name>")
+        sys.exit(1)
+
+    job_name = sys.argv[1]
     run_id = trigger_glue_job(job_name)
     print("Started Glue job run with ID:", run_id)
