@@ -24,7 +24,7 @@ def trigger_glue_job(glue_job_name):
  
 if __name__ == "__main__":
     # Get the Glue job name from the environment variable
-    job_name = os.environ.get('GITHUB_JOB_NAME')
+    job_name = Data-glue-job-1
 
     if not job_name:
         print("Error: Environment variable GITHUB_JOB_NAME is not set.")
