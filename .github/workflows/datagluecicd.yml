@@ -1,59 +1,41 @@
+name: Create Glue Job and Trigger
 
-name: Glue CI/CD Pipeline
- 
 on:
-
+  workflow_dispatch:
   push:
-
     branches:
-
       - glue
 
-  workflow_dispatch: # This event allows manual triggering
- 
 jobs:
-
-  deploy:
-
+  create-and-trigger-glue-job:
     runs-on: ubuntu-latest
- 
+
     steps:
-
       - name: Checkout Repository
-
         uses: actions/checkout@v2
- 
-      - name: Set up AWS credentials
 
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
-
         with:
-
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Replace with your desired AWS region
 
-          aws-region: us-east-1
- 
-      - name: Install AWS CLI
-
+     
+      - name: Create Glue Job
         run: |
+          # Get the ARN of the IAM role
+          ROLE_ARN=$(aws iam get-role --role-name AWS-Glue --query 'Role.Arn' --output text)
 
-          sudo apt-get update
+          # Create Glue job referencing the GitHub location of the script
+          aws glue create-job --name Data-glue-job \
+                        --role "$ROLE_ARN" \
+                        --command 'Name=glueetl,ScriptLocation=https://raw.githubusercontent.com/Devopsawsr/PHOTOSEC/glue/trigger_glue_job.py' \
+                        --default-arguments '{"--job-language": "python"}'
 
-          sudo apt-get install -y awscli
 
- 
-      - name: Create Glue job
 
-        run: |
-
-          aws glue create-job \
-
-            --name "Data_ETL_Gluejob1" \
-
-            --role "AWS-Glue" \
-
-            --command '{"Name":"glueetl","ScriptLocation":"file://glue_scripts/trigger_glue_job.py"}' \
-
-            --default-arguments '{"--job-language":"python"}'
+      - name: Run Python script
+        run: python trigger_glue_job.py $GITHUB_JOB_NAME
+        env:
+          GITHUB_JOB_NAME: ${{ steps.create-glue-job.outputs.job-name }}
