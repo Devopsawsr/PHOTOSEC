@@ -1,35 +1,66 @@
+
 name: Glue CI/CD Pipeline
  
 on:
-  workflow_dispatch:
+
   push:
+
     branches:
-      - main
+
+      - glue
+
+  workflow_dispatch: # This event allows manual triggering
  
 jobs:
+
   deploy:
+
     runs-on: ubuntu-latest
  
     steps:
+
       - name: Checkout Repository
+
         uses: actions/checkout@v2
  
       - name: Set up AWS credentials
+
         uses: aws-actions/configure-aws-credentials@v1
+
         with:
+
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+
+          aws-region: <YOUR_AWS_REGION>
  
       - name: Install AWS CLI
+
         run: |
+
           sudo apt-get update
+
           sudo apt-get install -y awscli
  
-      - name: Create Glue job
+      - name: Fetch Glue script from GitHub
+
         run: |
+
+          mkdir -p glue_scripts
+
+          curl -o glue_scripts/trigger_glue_job.py https://github.com/Devopsawsr/PHOTOSEC/blob/main/trigger_glue_job.py
+ 
+      - name: Create Glue job
+
+        run: |
+
           aws glue create-job \
+
             --name "Data_ETL_Gluejob" \
+
             --role "AWS-Glue" \
-            --command '{"Name":"glueetl","ScriptLocation":"file://trigger_glue_job.py"}' \
+
+            --command '{"Name":"glueetl","ScriptLocation":"file://glue_scripts/trigger_glue_job.py"}' \
+
             --default-arguments '{"--job-language":"python"}'
