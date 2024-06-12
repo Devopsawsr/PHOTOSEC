@@ -42,14 +42,7 @@ jobs:
           sudo apt-get update
 
           sudo apt-get install -y awscli
- 
-      - name: Fetch Glue script from GitHub
 
-        run: |
-
-          mkdir -p glue_scripts
-
-          curl -o glue_scripts/trigger_glue_job.py https://github.com/Devopsawsr/PHOTOSEC/blob/main/trigger_glue_job.py
  
       - name: Create Glue job
 
