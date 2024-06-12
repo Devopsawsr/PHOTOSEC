@@ -28,7 +28,7 @@ jobs:
           ROLE_ARN=$(aws iam get-role --role-name AWS-Glue --query 'Role.Arn' --output text)
 
           # Create Glue job referencing the GitHub location of the script
-          aws glue create-job --name Data-glue-job \
+          aws glue create-job --name Data-glue-job-1 \
                         --role "$ROLE_ARN" \
                         --command 'Name=glueetl,ScriptLocation=https://raw.githubusercontent.com/Devopsawsr/PHOTOSEC/glue/.github/scripts/trigger_glue_job.py' \
                         --default-arguments '{"--job-language": "python"}'
