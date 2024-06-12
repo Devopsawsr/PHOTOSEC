@@ -30,7 +30,7 @@ jobs:
           # Create Glue job referencing the GitHub location of the script
           aws glue create-job --name Data-glue-job \
                         --role "$ROLE_ARN" \
-                        --command 'Name=glueetl,ScriptLocation=https://raw.githubusercontent.com/Devopsawsr/PHOTOSEC/glue/trigger_glue_job.py' \
+                        --command 'Name=glueetl,ScriptLocation=https://raw.githubusercontent.com/Devopsawsr/PHOTOSEC/glue/.github/scripts/trigger_glue_job.py' \
                         --default-arguments '{"--job-language": "python"}'
 
 
