@@ -1,0 +1,23 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+    commands:
+      - echo "Installing dependencies..."
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - $(aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 730335363558.dkr.ecr.us-east-1.amazonaws.com)
+      - REPOSITORY_URI=730335363558.dkr.ecr.us-east-1.amazonaws.com/nyl-dev-repo1
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo "Building the Docker image..."
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+  post_build:
+    commands:
+      - echo "Pushing the Docker image to ECR..."
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Updating the Glue job to use the new image..."
+      - aws glue update-job --job-name example-glue-job --job-update '{ "Command": { "Name": "glueetl", "ScriptLocation": "s3://path-to-your-script/etl-script.py", "PythonVersion": "3" }, "DefaultArguments": { "--TempDir": "s3://path-to-your-temp-dir/", "--additional-python-modules": "pandas", "--extra-py-files": "$REPOSITORY_URI:$IMAGE_TAG" } }'
