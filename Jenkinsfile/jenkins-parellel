@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Install httpd') {
+            steps {
+                echo 'Deployment process'
+                sleep 20
+            }
+        }
+        
+        stage('Run Parallel') {
+            parallel {
+                stage('Dev') {
+                    steps {
+                        echo 'Deployment in Dev'
+                        sleep 20
+                    }
+                }
+                stage('QA') {
+                    steps {
+                        echo 'Deployment in QA'
+                        sleep 20
+                    }
+                }
+                stage('Stage') {
+                    steps {
+                        echo 'Deployment in Stage'
+                        sleep 20
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'The build and installation were successful'
+        }
+        failure {
+            echo 'The build and installation failed'
+        }
+    }
+}
