@@ -11,7 +11,7 @@ pipeline {
             parallel {
         stage("Install HTTPD") {
             steps {
-                echo "yum install httpd -y"
+                echo "yum install httpd"
                 sleep 15
             }
         }
@@ -45,8 +45,7 @@ pipeline {
             echo "This Build is failed"
         }
         changed {  
-             echo 'This will run only if the state of the Pipeline has changed'  
-             echo 'For example, if the Pipeline was previously failing but is now successful'  
+             echo 'This will run only if the state of the Pipeline has changed' 
          }  
     }
 }
