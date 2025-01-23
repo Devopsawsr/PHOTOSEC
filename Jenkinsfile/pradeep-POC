@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+    stages {
+        stage("Update") {
+            steps {
+                echo "This is to update"
+                sleep 15
+            }
+        }
+        stage("Parallel") {
+            parallel {
+        stage("Install HTTPD") {
+            steps {
+                echo "yum install httpd -y"
+                sleep 15
+            }
+        }
+        stage("Enable HTTPD") {
+            steps {
+                echo "systemctl enable httpd"
+                sleep 15
+            }
+        }
+            }
+        }
+        stage("Start HTTPD") {
+            steps {
+                echo "systemctl start httpd"
+                sleep 15
+            }
+        }
+        stage("Status HTTPD") {
+            steps {
+                echo "systemctl status httpd"
+                sleep 15
+            }
+        }
+
+    }
+    post {
+        success {
+            echo "This Build is success"
+        }
+        failure {
+            echo "This Build is failed"
+        }
+        changed {  
+             echo 'This will run only if the state of the Pipeline has changed'  
+             echo 'For example, if the Pipeline was previously failing but is now successful'  
+         }  
+    }
+}
